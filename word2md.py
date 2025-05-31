@@ -124,7 +124,7 @@ def word_to_markdown(docx_path, output_md_path, code_lang, section_range=None):
                                 image_path = os.path.join(image_dir, image_name)
                                 with open(image_path, "wb") as f:
                                     f.write(image_data)
-                                markdown_lines.append(f"![img{sec_index}-{image_count}](./{image_dir}/{image_name})")
+                                markdown_lines.append(f"![img{sec_index}-{image_count}]({image_dir}/{image_name})")
                                 image_count += 1
                         break  # 如果已找到一个图片，不再继续搜索该 run
 
