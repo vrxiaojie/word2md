@@ -1,8 +1,20 @@
 import argparse
+import re
 from docx import Document
 import os
 import shutil
 from docx.oxml.ns import qn
+
+
+def convert_plain_urls_to_md(text):
+    # 初步提取 URL，不包括末尾中文/标点
+    url_pattern = r"(https?://[^\s\)\]\}<>\"\'，。：；！、]+)"
+
+    def replacer(match):
+        url = match.group(1)
+        return f"[{url}]({url})"
+
+    return re.sub(url_pattern, replacer, text)
 
 def word_to_markdown(docx_path, output_md_path, code_lang, section_range=None):
     # 将图片与输出文件存放在同一个目录下
@@ -35,13 +47,22 @@ def word_to_markdown(docx_path, output_md_path, code_lang, section_range=None):
     if section_range is None:
         print("检测到以下段落：")
         for sec in sections:
-            print(f"{sec['index']}: {sec['title']}")
+            # 避免出现index为0的情况
+            if sec["index"] > 0:
+                print(f"{sec['index']}: {sec['title']}")
         user_input = input("请输入要转换的段落范围（例如 2-4 或 1,3,5）：").strip()
         if "-" in user_input:
             start, end = map(int, user_input.split("-"))
+            # 防止转换范围越界
+            if end > section_index or end <= 0:
+                print(f"错误，请检查输入的段落数值！最大值为{section_index}")
+                return None
             selected_sections = [s for s in sections if start <= s["index"] <= end]
         else:
             indices = set(map(int, user_input.split(",")))
+            if max(indices) > section_index or min(indices) <= 0:
+                print(f"错误，请检查输入的段落数值！最大值为{section_index}")
+                return None
             selected_sections = [s for s in sections if s["index"] in indices]
     else:
         selected_sections = [s for s in sections if s["index"] in section_range]
@@ -62,7 +83,6 @@ def word_to_markdown(docx_path, output_md_path, code_lang, section_range=None):
         markdown_lines.append(f"## {sec['title']}")
 
         in_code_block = False
-        in_info_block = False
 
         for para in sec["content"]:
             style = para.style.name.strip()
@@ -104,7 +124,7 @@ def word_to_markdown(docx_path, output_md_path, code_lang, section_range=None):
                                 image_path = os.path.join(image_dir, image_name)
                                 with open(image_path, "wb") as f:
                                     f.write(image_data)
-                                markdown_lines.append(f"![img{sec_index}-{image_count}](./{image_dir}/{image_name})")
+                                markdown_lines.append(f"![img{sec_index}-{image_count}]({image_dir}/{image_name})")
                                 image_count += 1
                         break  # 如果已找到一个图片，不再继续搜索该 run
 
@@ -123,7 +143,8 @@ def word_to_markdown(docx_path, output_md_path, code_lang, section_range=None):
                 merged_text += "**"
 
             if merged_text.strip():
-                markdown_lines.append(merged_text.strip())
+                converted_text = convert_plain_urls_to_md(merged_text.strip())
+                markdown_lines.append(converted_text)
 
             markdown_lines.append("")
 
