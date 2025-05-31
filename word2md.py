@@ -1,8 +1,20 @@
 import argparse
+import re
 from docx import Document
 import os
 import shutil
 from docx.oxml.ns import qn
+
+
+def convert_plain_urls_to_md(text):
+    # 初步提取 URL，不包括末尾中文/标点
+    url_pattern = r"(https?://[^\s\)\]\}<>\"\'，。：；！、]+)"
+
+    def replacer(match):
+        url = match.group(1)
+        return f"[{url}]({url})"
+
+    return re.sub(url_pattern, replacer, text)
 
 def word_to_markdown(docx_path, output_md_path, code_lang, section_range=None):
     # 将图片与输出文件存放在同一个目录下
@@ -123,7 +135,8 @@ def word_to_markdown(docx_path, output_md_path, code_lang, section_range=None):
                 merged_text += "**"
 
             if merged_text.strip():
-                markdown_lines.append(merged_text.strip())
+                converted_text = convert_plain_urls_to_md(merged_text.strip())
+                markdown_lines.append(converted_text)
 
             markdown_lines.append("")
 
