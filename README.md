@@ -93,5 +93,5 @@ python word2md.py -i input.docx -o output.md -l c
 ---
 ## 📜 License
 
-本项目使用 [MIT License](LICENSE) 开源，欢迎自由使用、修改、分享！
+本项目使用 [GPL3.0](LICENSE) 开源，欢迎自由使用、修改、分享！
 
