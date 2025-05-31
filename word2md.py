@@ -83,7 +83,6 @@ def word_to_markdown(docx_path, output_md_path, code_lang, section_range=None):
         markdown_lines.append(f"## {sec['title']}")
 
         in_code_block = False
-        in_info_block = False
 
         for para in sec["content"]:
             style = para.style.name.strip()
