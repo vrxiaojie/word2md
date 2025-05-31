@@ -47,13 +47,22 @@ def word_to_markdown(docx_path, output_md_path, code_lang, section_range=None):
     if section_range is None:
         print("检测到以下段落：")
         for sec in sections:
-            print(f"{sec['index']}: {sec['title']}")
+            # 避免出现index为0的情况
+            if sec["index"] > 0:
+                print(f"{sec['index']}: {sec['title']}")
         user_input = input("请输入要转换的段落范围（例如 2-4 或 1,3,5）：").strip()
         if "-" in user_input:
             start, end = map(int, user_input.split("-"))
+            # 防止转换范围越界
+            if end > section_index or end <= 0:
+                print(f"错误，请检查输入的段落数值！最大值为{section_index}")
+                return None
             selected_sections = [s for s in sections if start <= s["index"] <= end]
         else:
             indices = set(map(int, user_input.split(",")))
+            if max(indices) > section_index or min(indices) <= 0:
+                print(f"错误，请检查输入的段落数值！最大值为{section_index}")
+                return None
             selected_sections = [s for s in sections if s["index"] in indices]
     else:
         selected_sections = [s for s in sections if s["index"] in section_range]
