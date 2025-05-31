@@ -5,7 +5,9 @@ import shutil
 from docx.oxml.ns import qn
 
 def word_to_markdown(docx_path, output_md_path, code_lang, section_range=None):
-    image_dir = "images"
+    # 将图片与输出文件存放在同一个目录下
+    output_dir = os.path.dirname(os.path.abspath(output_md_path))
+    image_dir = os.path.join(output_dir, "images")
     doc = Document(docx_path)
 
     # 按 Heading 1 分段
