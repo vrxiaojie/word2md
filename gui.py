@@ -1,9 +1,10 @@
 import sys
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QLabel, QLineEdit, QPushButton,
-    QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QMessageBox, QListWidget
+    QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QMessageBox, QListWidget, QComboBox
 )
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPalette, QColor
 from converters.word2md_converter import Word2MarkdownConverter
 from parsers.document_parser import WordDocumentParser
 
@@ -13,7 +14,7 @@ class Word2MdGUI(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Word to Markdown Converter @vrxiaojie")
-        self.setGeometry(100, 100, 800, 400)
+        self.setGeometry(100, 100, 900, 500)
 
         self.initUI()
 
@@ -21,15 +22,18 @@ class Word2MdGUI(QMainWindow):
         layout = QVBoxLayout()
 
         # Input file selection
+        input_layout = QHBoxLayout()
         self.input_label = QLabel("选择输入的 Word 文件：")
-        layout.addWidget(self.input_label)
+        input_layout.addWidget(self.input_label)
 
         self.input_line = QLineEdit(self)
-        layout.addWidget(self.input_line)
+        input_layout.addWidget(self.input_line)
 
         self.input_button = QPushButton("浏览", self)
         self.input_button.clicked.connect(self.select_input_file)
-        layout.addWidget(self.input_button)
+        input_layout.addWidget(self.input_button)
+
+        layout.addLayout(input_layout)
 
         # Section selection and conversion list
         list_layout = QHBoxLayout()
@@ -56,16 +60,30 @@ class Word2MdGUI(QMainWindow):
 
         layout.addLayout(list_layout)
 
+        # Code block language selection
+        lang_layout = QHBoxLayout()
+        self.lang_label = QLabel("代码块语言：")
+        lang_layout.addWidget(self.lang_label)
+
+        self.lang_combo = QComboBox(self)
+        self.lang_combo.addItems(["", "Python", "C", "Java", "JavaScript", "HTML", "CSS"])
+        lang_layout.addWidget(self.lang_combo)
+
+        layout.addLayout(lang_layout)
+
         # Output file selection
+        output_layout = QHBoxLayout()
         self.output_label = QLabel("选择输出的 Markdown 文件：")
-        layout.addWidget(self.output_label)
+        output_layout.addWidget(self.output_label)
 
         self.output_line = QLineEdit(self)
-        layout.addWidget(self.output_line)
+        output_layout.addWidget(self.output_line)
 
         self.output_button = QPushButton("浏览", self)
         self.output_button.clicked.connect(self.select_output_file)
-        layout.addWidget(self.output_button)
+        output_layout.addWidget(self.output_button)
+
+        layout.addLayout(output_layout)
 
         # Convert button
         self.convert_button = QPushButton("转换", self)
@@ -89,7 +107,7 @@ class Word2MdGUI(QMainWindow):
             parser = WordDocumentParser(file_name)
             self.all_sections_list.clear()
             for section in parser.get_sections():
-                if section['index']>0:
+                if section['index'] > 0:
                     self.all_sections_list.addItem(f"{section['index']}: {section['title']}")
         except Exception as e:
             QMessageBox.critical(self, "错误", f"解析 Word 文件时发生错误：{str(e)}")
@@ -115,6 +133,7 @@ class Word2MdGUI(QMainWindow):
     def convert_word_to_md(self):
         input_path = self.input_line.text()
         output_path = self.output_line.text()
+        lang = self.lang_combo.currentText()
 
         if not input_path or not output_path:
             QMessageBox.warning(self, "警告", "请输入完整的文件路径！")
@@ -126,11 +145,12 @@ class Word2MdGUI(QMainWindow):
                 text = self.selected_sections_list.item(i).text()
                 index = int(text.split(":")[0])  # 提取段落索引
                 selected_indices.append(index)
+
             if not selected_indices:
                 QMessageBox.warning(self, "警告", "没有选择任何章节")
                 return
 
-            converter = Word2MarkdownConverter()
+            converter = Word2MarkdownConverter(code_language=lang)
             success = converter.convert(input_path, output_path, section_range=selected_indices)
 
             if success:
