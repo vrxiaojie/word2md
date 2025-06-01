@@ -1,9 +1,9 @@
+import os
 import sys
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QLabel, QLineEdit, QPushButton,
     QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QMessageBox, QListWidget, QComboBox
 )
-from PyQt5.QtCore import Qt
 from converters.word2md_converter import Word2MarkdownConverter
 from parsers.document_parser import WordDocumentParser
 from style import get_stylesheet  # 导入样式
@@ -175,13 +175,31 @@ class Word2MdGUI(QMainWindow):
             success = converter.convert(input_path, output_path, section_range=selected_indices)
 
             if success:
-                QMessageBox.information(self, "成功", "转换完成！")
+                self.show_success_message(output_path)
             else:
                 QMessageBox.warning(self, "失败", "转换失败，请检查输入文件。")
 
         except Exception as e:
             QMessageBox.critical(self, "错误", f"发生错误：{str(e)}")
 
+    def show_success_message(self, output_path):
+        """显示成功提示框，并添加两个按钮"""
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("转换成功")
+        msg_box.setText("✅转换完成！")
+        msg_box.setIcon(QMessageBox.Information)
+
+        open_file_btn = msg_box.addButton("打开 Markdown 文件", QMessageBox.ActionRole)
+        open_folder_btn = msg_box.addButton("打开输出文件夹", QMessageBox.ActionRole)
+        msg_box.addButton("确定", QMessageBox.RejectRole)
+
+        msg_box.exec_()
+
+        if msg_box.clickedButton() == open_file_btn:
+            os.startfile(output_path)  # 打开 Markdown 文件
+        elif msg_box.clickedButton() == open_folder_btn:
+            folder_path = os.path.dirname(output_path)
+            os.startfile(folder_path)  # 打开输出文件夹
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
