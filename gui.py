@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import (
     QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QMessageBox, QListWidget, QComboBox
 )
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPalette, QColor
 from converters.word2md_converter import Word2MarkdownConverter
 from parsers.document_parser import WordDocumentParser
 
@@ -47,9 +46,17 @@ class Word2MdGUI(QMainWindow):
         self.add_button.clicked.connect(self.add_to_conversion_list)
         button_layout.addWidget(self.add_button)
 
+        self.add_all_button = QPushButton("全部加入", self)  # 全部加入按钮
+        self.add_all_button.clicked.connect(self.add_all_to_conversion_list)
+        button_layout.addWidget(self.add_all_button)
+
         self.remove_button = QPushButton("从转换列表移除", self)
         self.remove_button.clicked.connect(self.remove_from_conversion_list)
         button_layout.addWidget(self.remove_button)
+
+        self.remove_all_button = QPushButton("全部移除", self)  # 全部移除按钮
+        self.remove_all_button.clicked.connect(self.remove_all_from_conversion_list)
+        button_layout.addWidget(self.remove_all_button)
 
         button_layout.addStretch()
         list_layout.addLayout(button_layout)
@@ -119,11 +126,22 @@ class Word2MdGUI(QMainWindow):
             if item.text() not in [self.selected_sections_list.item(i).text() for i in range(self.selected_sections_list.count())]:
                 self.selected_sections_list.addItem(item.text())
 
+    def add_all_to_conversion_list(self):
+        """将所有段落添加到待转换列表"""
+        for i in range(self.all_sections_list.count()):
+            item_text = self.all_sections_list.item(i).text()
+            if item_text not in [self.selected_sections_list.item(j).text() for j in range(self.selected_sections_list.count())]:
+                self.selected_sections_list.addItem(item_text)
+
     def remove_from_conversion_list(self):
         """从待转换列表中移除选中的段落"""
         selected_items = self.selected_sections_list.selectedItems()
         for item in selected_items:
             self.selected_sections_list.takeItem(self.selected_sections_list.row(item))
+
+    def remove_all_from_conversion_list(self):
+        """清空待转换列表"""
+        self.selected_sections_list.clear()
 
     def select_output_file(self):
         file_name, _ = QFileDialog.getSaveFileName(self, "选择 Markdown 文件", "", "Markdown Files (*.md)")
