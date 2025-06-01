@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from converters.word2md_converter import Word2MarkdownConverter
 from parsers.document_parser import WordDocumentParser
+from style import get_stylesheet  # 导入样式
 
 
 class Word2MdGUI(QMainWindow):
@@ -15,6 +16,7 @@ class Word2MdGUI(QMainWindow):
         self.setWindowTitle("Word to Markdown Converter @vrxiaojie")
         self.setGeometry(100, 100, 900, 500)
 
+        self.setStyleSheet(get_stylesheet())  # 应用样式表
         self.initUI()
 
     def initUI(self):
@@ -42,6 +44,7 @@ class Word2MdGUI(QMainWindow):
         list_layout.addWidget(self.all_sections_list)
 
         button_layout = QVBoxLayout()
+        button_layout.addStretch()
         self.add_button = QPushButton("添加到转换列表", self)
         self.add_button.clicked.connect(self.add_to_conversion_list)
         button_layout.addWidget(self.add_button)
@@ -59,13 +62,6 @@ class Word2MdGUI(QMainWindow):
         button_layout.addWidget(self.remove_all_button)
 
         button_layout.addStretch()
-        list_layout.addLayout(button_layout)
-
-        self.selected_sections_list = QListWidget(self)
-        self.selected_sections_list.setSelectionMode(QListWidget.MultiSelection)
-        list_layout.addWidget(self.selected_sections_list)
-
-        layout.addLayout(list_layout)
 
         # Code block language selection
         lang_layout = QHBoxLayout()
@@ -75,8 +71,15 @@ class Word2MdGUI(QMainWindow):
         self.lang_combo = QComboBox(self)
         self.lang_combo.addItems(["", "Python", "C", "Java", "JavaScript", "HTML", "CSS"])
         lang_layout.addWidget(self.lang_combo)
+        button_layout.addLayout(lang_layout)
 
-        layout.addLayout(lang_layout)
+        list_layout.addLayout(button_layout)
+
+        self.selected_sections_list = QListWidget(self)
+        self.selected_sections_list.setSelectionMode(QListWidget.MultiSelection)
+        list_layout.addWidget(self.selected_sections_list)
+
+        layout.addLayout(list_layout)
 
         # Output file selection
         output_layout = QHBoxLayout()
