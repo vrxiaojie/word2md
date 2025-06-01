@@ -3,7 +3,7 @@ import os
 from converters import MarkdownConverter
 from generators import MarkdownGenerator
 from processors import ImageProcessor
-from selectors import SectionSelector
+from selector import SectionSelector
 from parsers import WordDocumentParser
 from typing import List, Optional, Set, Union
 
