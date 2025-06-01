@@ -58,7 +58,7 @@ pip install -r requirements.txt
 
 ## ▶️ 5.在终端运行程序
 ```shell
-python word2md.py -i InputFile.docx -o OutputFile.md [-l language]
+python main.py -i InputFile.docx -o OutputFile.md [-l language]
 ```
 **参数解释**
 
@@ -72,13 +72,13 @@ python word2md.py -i InputFile.docx -o OutputFile.md [-l language]
 ### 💡 示例1
 输入文件为 `input.docx`，输出文件为`output.md`
 ```shell
-python word2md.py -i input.docx -o output.md
+python main.py -i input.docx -o output.md
 ```
 
 ### 💡 示例2
 输入文件为 `input.docx`，输出文件为`output.md`，且统一文档内的代码块语言为 `C'
 ```shell
-python word2md.py -i input.docx -o output.md -l c
+python main.py -i input.docx -o output.md -l c
 ```
 ---
 在执行命令后，会提示输入要转换的段落范围，如下图所示
