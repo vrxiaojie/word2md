@@ -1,5 +1,7 @@
 import os
 import sys
+
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QLabel, QLineEdit, QPushButton,
     QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QMessageBox, QListWidget, QComboBox
@@ -201,8 +203,20 @@ class Word2MdGUI(QMainWindow):
             folder_path = os.path.dirname(output_path)
             os.startfile(folder_path)  # 打开输出文件夹
 
+
+def get_resource_path(relative_path):
+    """获取资源文件的绝对路径（支持 PyInstaller 打包后的路径）"""
+    # 如果程序是打包后的状态，会有 _MEIPASS 属性
+    if hasattr(sys, '_MEIPASS'):
+        # 资源文件位于 _internal 文件夹中
+        return os.path.join(sys._MEIPASS, relative_path)
+    # 开发环境直接使用相对路径
+    return os.path.join(os.path.abspath("."), relative_path)
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = Word2MdGUI()
+    main_window.setWindowIcon(QIcon(get_resource_path("logo.ico")))
     main_window.show()
     sys.exit(app.exec_())
