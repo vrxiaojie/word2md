@@ -126,6 +126,9 @@ class Word2MdGUI(QMainWindow):
                 text = self.selected_sections_list.item(i).text()
                 index = int(text.split(":")[0])  # 提取段落索引
                 selected_indices.append(index)
+            if not selected_indices:
+                QMessageBox.warning(self, "警告", "没有选择任何章节")
+                return
 
             converter = Word2MarkdownConverter()
             success = converter.convert(input_path, output_path, section_range=selected_indices)
