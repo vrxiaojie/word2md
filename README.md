@@ -120,3 +120,39 @@ python main.py -i input.docx -o output.md -l c
 
 本项目使用 [GPL3.0](LICENSE) 开源，欢迎自由使用、修改、分享！
 
+---
+
+# 🤝 如何贡献
+非常欢迎你对仓库做出贡献！以下是参与贡献的方法：
+
+## 🗂️ 提交Issue
+- 如果你发现问题或者有功能建议，请到[Issue页面](https://github.com/vrxiaojie/word2md/issues)提交一个新的Issue。
+- 提交Issue时，请尽量详细描述问题或建议。
+
+## 🛠️ 提交Pull Request
+1. Fork这个仓库到你的账号下。
+2. Clone你的Fork的仓库到本地：  
+   ```bash
+   git clone https://github.com/你的用户名/word2md.git
+   ```
+3. 创建一个新分支：  
+   ```bash
+   git checkout -b feature/你的功能描述
+   ```
+4. 实现你的功能或修复问题，并提交代码：  
+   ```bash
+   git add .
+   git commit -m "描述你的改动"
+   ```
+5. 推送到你的远程仓库：  
+   ```bash
+   git push origin feature/你的功能描述
+   ```
+6. 打开原始仓库，提交一个[Pull Request](https://github.com/vrxiaojie/word2md/pulls)。
+
+## 👀 代码规范
+- 请确保你的代码能够正常运行。
+- 请尽量遵守代码风格，保持代码的可读性和一致性。
+
+## 🙋‍♀️ 联系方式
+如果你有任何疑问，可以通过[Discussions页面](https://github.com/vrxiaojie/word2md/discussions)一起交流。
